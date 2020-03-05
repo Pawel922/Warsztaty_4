@@ -18,8 +18,9 @@ $(function () {
             var bookElement = $("<div>");
             var bookTitle = $("<div>");
             var bookDetails = $("<div>");
-            bookElement.appendTo(app);
+            bookElement.addClass("book").appendTo(app);
             bookTitle
+                .addClass("book-title")
                 .text(book.title)
                 .appendTo(bookElement);
 
@@ -31,7 +32,7 @@ $(function () {
                 }).done(function (data) {
                     renderBookDetails(bookDetails, data)
                 });
-                bookDetails.appendTo(bookElement);
+                bookDetails.addClass("book-details").appendTo(bookElement);
             });
         });
     }
