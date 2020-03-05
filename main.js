@@ -14,6 +14,7 @@ $(function () {
     }
 
     function renderBooks(books) {
+        app.empty();
         books.forEach(function(book) {
             var bookElement = $("<div>");
             var bookTitle = $("<div>");
@@ -32,8 +33,8 @@ $(function () {
                 }).done(function (data) {
                     renderBookDetails(bookDetails, data)
                 });
-                bookDetails.addClass("book-details").appendTo(bookElement);
             });
+            bookDetails.addClass("book-details").appendTo(bookElement);
         });
     }
 
@@ -44,5 +45,25 @@ $(function () {
         }).done(renderBooks);
     }
 
+    function handleForm() {
+        $("#bookForm").on("submit", function(e) {
+            e.preventDefault();
+            var data = {};
+            $(this)
+                .find("input")
+                .each(function() {
+                    var name = $(this).attr("name");
+                    data[name] = $(this).val();
+                });
+            $.ajax({
+                method: "POST",
+                url: "http://localhost:8282/books",
+                contentType: "application/json",
+                data: JSON.stringify(data)
+            }).done(fetchBooks);
+        });
+    }
+
     fetchBooks();
+    handleForm();
 });
