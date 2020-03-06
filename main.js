@@ -70,6 +70,14 @@ $(function () {
         });
     }
 
+    app.on("click", ".delete-button", function (e) {
+        var bookId = $(e.target).parent().next().attr("book-id");
+        $.ajax({
+            method: "DELETE",
+            url: "http://localhost:8282/books/" + bookId
+        }).done(fetchBooks)
+    });
+
     fetchBooks();
     handleForm();
 });
