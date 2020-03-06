@@ -5,6 +5,7 @@ $(function () {
     function renderBookDetails(bookDetails, data) {
         bookDetails
             .empty()
+            .attr("book-id", data.id)
             .append("ID: " + data.id + "<br />")
             .append("Author: " + data.author + "<br />")
             .append("ISBN: " + data.isbn + "<br />")
@@ -19,6 +20,7 @@ $(function () {
             var bookElement = $("<div>");
             var bookTitle = $("<div>");
             var bookDetails = $("<div>");
+            var deleteButton = $("<button>");
             bookElement.addClass("book").appendTo(app);
             bookTitle
                 .addClass("book-title")
@@ -27,6 +29,10 @@ $(function () {
 
             bookTitle.one("click", function () {
                 bookDetails.text("...");
+                deleteButton
+                    .addClass("delete-button")
+                    .text("Delete")
+                    .appendTo(bookTitle);
                 $.ajax({
                     method: "GET",
                     url: "http://localhost:8282/books/" + book.id
@@ -57,7 +63,7 @@ $(function () {
                 });
             $.ajax({
                 method: "POST",
-                url: "http://localhost:8282/books",
+                url: "http://localhost:8282/books/",
                 contentType: "application/json",
                 data: JSON.stringify(data)
             }).done(fetchBooks);
