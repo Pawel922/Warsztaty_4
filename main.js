@@ -2,10 +2,12 @@ $(function () {
 
     var app = $("#app");
 
-    function renderBookDetails(bookDetails, data) {
-        bookDetails
+    function renderBookDetails(data) {
+        var bookId = data.id;
+        var detailsDiv = $("div[data-id=" + bookId + "]").next();
+
+        detailsDiv
             .empty()
-            .attr("book-id", data.id)
             .append("ID: " + data.id + "<br />")
             .append("Author: " + data.author + "<br />")
             .append("ISBN: " + data.isbn + "<br />")
@@ -23,6 +25,7 @@ $(function () {
             var deleteButton = $("<button>");
             bookElement.addClass("book").appendTo(app);
             bookTitle
+                .attr("data-id", book.id)
                 .addClass("book-title")
                 .text(book.title)
                 .appendTo(bookElement);
@@ -30,25 +33,19 @@ $(function () {
             bookTitle.one("click", function () {
                 bookDetails.text("...");
                 deleteButton
+                    .attr("data-method", "DELETE")
+                    .attr("data-id", book.id)
                     .addClass("delete-button")
                     .text("Delete")
                     .appendTo(bookTitle);
-                $.ajax({
-                    method: "GET",
-                    url: "http://localhost:8282/books/" + book.id
-                }).done(function (data) {
-                    renderBookDetails(bookDetails, data)
-                });
+                makeRequestForElement($(this), renderBookDetails)
             });
             bookDetails.addClass("book-details").appendTo(bookElement);
         });
     }
 
     function fetchBooks() {
-        $.ajax({
-            method: "GET",
-            url: "http://localhost:8282/books/"
-        }).done(renderBooks);
+        makeRequestForElement(app, renderBooks);
     }
 
     function handleForm() {
@@ -61,22 +58,35 @@ $(function () {
                     var name = $(this).attr("name");
                     data[name] = $(this).val();
                 });
-            $.ajax({
-                method: "POST",
-                url: "http://localhost:8282/books/",
-                contentType: "application/json",
-                data: JSON.stringify(data)
-            }).done(fetchBooks);
+            makeRequestForElement($(this), fetchBooks, data);
         });
     }
 
     app.on("click", ".delete-button", function (e) {
-        var bookId = $(e.target).parent().next().attr("book-id");
-        $.ajax({
-            method: "DELETE",
-            url: "http://localhost:8282/books/" + bookId
-        }).done(fetchBooks)
+        makeRequestForElement($(e.target),fetchBooks);
     });
+    
+    function makeRequestForElement(element, functionName, data) {
+        var requestMethod = element.attr("data-method");
+        var urlAddress = "http://localhost:8282/books/";
+        var bookId = element.attr("data-id");
+        if (typeof bookId !== "undefined"){
+            urlAddress += bookId;
+        }
+        if (requestMethod !== "POST"){
+            $.ajax({
+                method: requestMethod,
+                url: urlAddress
+            }).done(functionName);
+        } else {
+            $.ajax({
+                method: requestMethod,
+                url: urlAddress,
+                contentType: "application/json",
+                data: JSON.stringify(data)
+            }).done(functionName);
+        }
+    }
 
     fetchBooks();
     handleForm();
