@@ -2,7 +2,7 @@
 
 ## Description
 Warsztaty_4 is a project which was created during Coders Lab lessons. 
-It mainly uses AJAX to manage dates from the server, which was provided by school. 
+It mainly uses AJAX to manage dataset from the server, which was provided by school. 
 Server stores information about books. In his functionality is similar to a library. 
 Our task was to create the web page which allows client to do following action:
  * GET /books/ - takes a list of all books
